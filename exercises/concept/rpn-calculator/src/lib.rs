@@ -1,3 +1,6 @@
+use CalculatorInput::*;
+use std::ops::{ Add, Sub, Mul, Div };
+
 #[derive(Debug)]
 pub enum CalculatorInput {
     Add,
@@ -8,8 +11,26 @@ pub enum CalculatorInput {
 }
 
 pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
-    unimplemented!(
-		"Given the inputs: {:?}, evaluate them as though they were a Reverse Polish notation expression",
-		inputs,
-	);
+    fn apply(stack: &mut Vec<i32>, op: impl Fn(i32, i32) -> i32) -> Option<i32> {
+        stack.pop().and_then(|right| stack.pop().and_then(|left| Some(op(left, right))))
+    }
+
+    let mut result = inputs.iter().fold(vec!(), |mut stack, input| {
+        if let Some(value) = match input {
+            Add        => apply(&mut stack, i32::add),
+            Subtract   => apply(&mut stack, i32::sub),
+            Multiply   => apply(&mut stack, i32::mul),
+            Divide     => apply(&mut stack, i32::div),
+            Value(val) => Some(*val),
+        } {
+            stack.push(value);
+        }
+        stack
+    });
+
+    if result.len() == 1 {
+        result.pop()
+    } else {
+        None
+    }
 }
