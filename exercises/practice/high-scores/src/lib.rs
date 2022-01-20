@@ -1,27 +1,29 @@
 #[derive(Debug)]
-pub struct HighScores;
+pub struct HighScores<'a> {
+    scores: &'a [u32]
+}
 
-impl HighScores {
-    pub fn new(scores: &[u32]) -> Self {
-        unimplemented!(
-            "Construct a HighScores struct, given the scores: {:?}",
-            scores
-        )
+impl<'a> HighScores<'a> {
+    pub fn new(scores: &'a [u32]) -> Self {
+        HighScores { scores: scores }
     }
 
-    pub fn scores(&self) -> &[u32] {
-        unimplemented!("Return all the scores as a slice")
+    pub fn scores(&self) -> &'a [u32] {
+        self.scores
     }
 
     pub fn latest(&self) -> Option<u32> {
-        unimplemented!("Return the latest (last) score")
+        self.scores.last().cloned()
     }
 
     pub fn personal_best(&self) -> Option<u32> {
-        unimplemented!("Return the highest score")
+        self.scores.iter().max().cloned()
     }
 
     pub fn personal_top_three(&self) -> Vec<u32> {
-        unimplemented!("Return 3 highest scores")
+        let mut scores_slice = self.scores.to_vec();
+        scores_slice.sort_unstable_by_key(|&val| std::cmp::Reverse(val));
+        scores_slice.truncate(3);
+        scores_slice
     }
 }
