@@ -34,7 +34,7 @@ In both cases, the expression evaluates to 6.
 
 ## 2. Example
 
-Lets manually evaluate that complex expression.
+Let's manually evaluate that complex expression.
 As we learned in the introduction, evaluation of RPN requires a stack.
 This stack is used to hold numeric values that the operators operate on.
 We start our calculator with an empty stack and then evaluate each element one at a time.
@@ -86,7 +86,12 @@ we can say the expression evaluated to 6.
 
 ## 3. Goal
 
-Your goal is to write a calculator to evaluate a list of inputs ordered by Reverse Polish notation.
+Your goal is to write a calculator to evaluate a list of inputs ordered by Reverse Polish notation and return the final element on the stack.
+
+If there is not exactly one element in the stack at the end, return `None`.
+
+If there is an operator with too few operands (such as the input `2 +`), return `None`.
+
 You are given the following enum and stubbed function as a starting point.
 
 ```rust
@@ -98,7 +103,7 @@ pub enum CalculatorInput {
     Divide,
     Value(i32),
 }
-  
+
 pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
     unimplemented!(
 		"Given the inputs: {:?}, evaluate them as though they were a Reverse Polish notation expression",
