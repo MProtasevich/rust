@@ -1,26 +1,62 @@
 #[derive(Debug, PartialEq, Eq)]
 pub struct Palindrome {
-    // implement your palindrome type here
+    value: u64,
+    factors: Vec<(u64, u64)>,
 }
 
 impl Palindrome {
     pub fn new(a: u64, b: u64) -> Palindrome {
-        unimplemented!("create a palindrome with factors ({}, {})", a, b)
+        Palindrome {
+            value: a * b,
+            factors: vec![(std::cmp::min(a, b), std::cmp::max(a, b))],
+        }
     }
 
     pub fn value(&self) -> u64 {
-        unimplemented!("return the value of this palindrome")
+        self.value
     }
 
     pub fn insert(&mut self, a: u64, b: u64) {
-        unimplemented!("insert new factors ({}, {}) into this palindrome", a, b)
+        if a * b != self.value {
+            panic!("Product of provided factors doesn't equal to the Palindrome value")
+        }
+        self.factors.push((a, b))
     }
 }
 
 pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
-    unimplemented!(
-        "Find the min and max palindromic numbers which are products of numbers in the inclusive range ({}..{})",
-        min,
-        max
-    )
+    let mut min_palindrome = Palindrome::new(min, max);
+    let mut max_palindrome = Palindrome::new(0, 0);
+
+    for i in min..=max {
+        for j in i..=max {
+            let v = i * j;
+            if min_palindrome.value == v {
+                min_palindrome.insert(i, j);
+            } else if min_palindrome.value > v && is_palindrome(v) {
+                min_palindrome = Palindrome::new(i, j);
+            }
+            if max_palindrome.value == v {
+                max_palindrome.insert(i, j);
+            } else if max_palindrome.value < v && is_palindrome(v) {
+                max_palindrome = Palindrome::new(i, j);
+            }
+        }
+    }
+    if max_palindrome.value > 0 {
+        Some((min_palindrome, max_palindrome))
+    } else {
+        None
+    }
+}
+
+fn is_palindrome(value: u64) -> bool {
+    let mut reversed = 0;
+    let mut copied = value;
+    while copied > 0 {
+        reversed *= 10;
+        reversed += copied % 10;
+        copied /= 10;
+    }
+    reversed == value
 }
